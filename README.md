@@ -5,7 +5,7 @@ An API for precise incident tracking tailored for insurance clients, enabling ef
 
 1. Clone the repository:
    
-   `git clone https://github.com/yourusername/incident-api.git`
+   `git clone https://github.com/stawuah/incident-report-api.git`
 
 2. Install required packages:   `npm i`
 3. To initiate the application, execute either `make dev` or `npm run dev` command.
