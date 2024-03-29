@@ -1,0 +1,102 @@
+{
+	"info": {
+		"_postman_id": "fc641d44-8474-4fbd-a97b-892d4ae8414b",
+		"name": "Enyata",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31616104"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Fetching data by city, temperature range and humidity range.",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5432/api/fetch-incident-report?city=accra",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5432",
+					"path": [
+						"api",
+						"fetch-incident-report"
+					],
+					"query": [
+						{
+							"key": "city",
+							"value": "accra"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add weather report ",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"client_id\": 1,\n  \"incident_desc\": \"Description of the incident\",\n  \"city\": \"Accra\",\n  \"country\": \"Ghana\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3321/api/report-incident",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3321",
+					"path": [
+						"api",
+						"report-incident"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "searches for incidents based on country name.",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"country\":\"Ghana\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3321/api/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3321",
+					"path": [
+						"api",
+						"search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
