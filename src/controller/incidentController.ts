@@ -1,7 +1,8 @@
-// controllers/taskController.ts
+
 import { Request, Response } from 'express';
 import { getPool } from '../db/db';
 import { createIncidentDTO, validateIncidentDTO } from '../dto/incidentDto';
+import {CustomError} from '../middleware/errHandler'
 
 // A POST endpoint that receives the incident report.
 // The endpoint receives the report, adds weather data and stores it in a table “incidents”.
@@ -12,10 +13,15 @@ export const createIncident = async (req: Request, res: Response) => {
 	try {
 		const { client_id, incident_desc, city, country } = req.body;
 
-		const incidentdTo = createIncidentDTO(client_id , incident_desc , city , country)
+		const incidentdTo = createIncidentDTO(
+			client_id,
+			incident_desc,
+			city,
+			country,
+		);
 
-		validateIncidentDTO(incidentdTo)
-		
+		validateIncidentDTO(incidentdTo);
+
 		const weatherResponse = await fetch(
 			`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.API_KEY}`,
 		);
@@ -46,8 +52,11 @@ export const createIncident = async (req: Request, res: Response) => {
 
 		res.status(201).json(newIncident);
 	} catch (error) {
-		console.error('Error creating incident:', error);
-		res.status(500).json({ error: 'Internal server error' });
+		if (error instanceof CustomError) {
+            res.status(error.statusCode).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
 	}
 };
 
@@ -80,8 +89,11 @@ export const searchIncidents = async (req: Request, res: Response) => {
 
 		res.status(201).json(incidents);
 	} catch (error) {
-		console.error('Error searching incidents:', error);
-		res.status(500).json({ error: 'Internal server error' });
+		if (error instanceof CustomError) {
+            res.status(error.statusCode).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
 	}
 };
 
@@ -143,10 +155,17 @@ export const listIncidents = async (req: Request, res: Response) => {
 
 		const { rows } = await db.query(query);
 
+		if (!rows || rows.length === 0) {
+			throw new CustomError('No incidents found', 404)
+		}
+
 		// Send the response with the fetched data
 		res.json(rows);
 	} catch (error) {
-		console.error('Error fetching incidents:', error);
-		res.status(500).json({ error: 'Internal Server Error' });
+		if (error instanceof CustomError) {
+            res.status(error.statusCode).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
 	}
 };
