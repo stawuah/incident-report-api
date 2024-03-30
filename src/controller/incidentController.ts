@@ -1,8 +1,7 @@
-
 import { Request, Response } from 'express';
 import { getPool } from '../db/db';
 import { createIncidentDTO, validateIncidentDTO } from '../dto/incidentDto';
-import {CustomError} from '../middleware/errHandler'
+import { CustomError } from '../middleware/errHandler';
 
 // A POST endpoint that receives the incident report.
 // The endpoint receives the report, adds weather data and stores it in a table “incidents”.
@@ -53,10 +52,10 @@ export const createIncident = async (req: Request, res: Response) => {
 		res.status(201).json(newIncident);
 	} catch (error) {
 		if (error instanceof CustomError) {
-            res.status(error.statusCode).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+			res.status(error.statusCode).json({ error: error.message });
+		} else {
+			res.status(500).json({ error: 'Internal Server Error' });
+		}
 	}
 };
 
@@ -90,10 +89,10 @@ export const searchIncidents = async (req: Request, res: Response) => {
 		res.status(201).json(incidents);
 	} catch (error) {
 		if (error instanceof CustomError) {
-            res.status(error.statusCode).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+			res.status(error.statusCode).json({ error: error.message });
+		} else {
+			res.status(500).json({ error: 'Internal Server Error' });
+		}
 	}
 };
 
@@ -156,16 +155,16 @@ export const listIncidents = async (req: Request, res: Response) => {
 		const { rows } = await db.query(query);
 
 		if (!rows || rows.length === 0) {
-			throw new CustomError('No incidents found', 404)
+			throw new CustomError('No incidents found', 404);
 		}
 
 		// Send the response with the fetched data
 		res.json(rows);
 	} catch (error) {
 		if (error instanceof CustomError) {
-            res.status(error.statusCode).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+			res.status(error.statusCode).json({ error: error.message });
+		} else {
+			res.status(500).json({ error: 'Internal Server Error' });
+		}
 	}
 };
