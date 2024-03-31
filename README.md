@@ -8,7 +8,15 @@ An API for precise incident tracking tailored for insurance clients, enabling ef
    `git clone https://github.com/yourusername/incident-api.git`
 
 2. Install required packages:   `npm i`
-3. To initiate the application, execute either `make dev` or `npm run dev` command.
+
+3 Ensure to configure the environment variables :
+
+``` PORT="LOCAL_SERVER_PORT_NUMBER"
+    API_KEY="YOUR_WEARTHER_API_KEY"
+    DATABASE_CONNECTION="DATABASE CONNECTION URI"
+```
+
+4. To initiate the application, execute either `make dev` or `npm run dev` command.
 
    
   ## API functionalities :
