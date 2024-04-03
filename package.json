@@ -7,7 +7,6 @@
 		"dev": "nodemon src/index.ts",
 		"compile": "npx tsc && node dist/index.js",
 		"pretty": "prettier --write \"src/**/*.ts\"",
-		"lint": "npx eslint . --ext .ts",
 		"test": "mocha --recursive test/**/*.test.ts"
 	},
 	"keywords": [],
