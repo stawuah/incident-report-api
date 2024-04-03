@@ -1,6 +1,7 @@
 import nock from "nock";
 import { assert , expect } from "chai"
 import { createIncidentDTO, IncidentDTO } from "../../src/dto/incidentDto";
+import { createIncident } from "../../src/controller/incidentController";
 const sinon = require('sinon');
 const  { searchIncidents ,listIncidents ,}  = require('../../src/controller/incidentController');
 
@@ -97,7 +98,7 @@ describe("create incident", () => {
 
     it("should make a GET request from API using the fetch function", async () => {
 
-        const mockedUserResponse = {
+        const mockedWeatherResponse = {
             "weather_report": {
                 "dt": 1711721427,
                 "id": 2306104,
@@ -145,7 +146,7 @@ describe("create incident", () => {
         };
         nock('https://api.openweathermap.org')
             .get(`/data/2.5/weather?q=Accra&appid=8729474y092edsdbdnw90`)
-            .reply(201, mockedUserResponse);
+            .reply(200, mockedWeatherResponse);
 
         // Check if response status is 201
         assert.ok(res.status(201));
@@ -187,4 +188,124 @@ describe("create incident", () => {
         });
     });
 
+    it('should create an incident report based on the DTO object with the provided parameters ', () => {
+       
+        const client_id = 10;
+        const incident_desc = 'Description of the incident';
+        const city = 'Accra';
+        const country = 'Ghana';
+
+        const mockedResponse = {
+            "client_id": 10,
+            "incident_desc": 'Description of the incident',
+            "city": 'Accra',
+            "country": 'Ghana',
+            "weather_report": {
+                "dt": 1711721427,
+                "id": 2306104,
+                "cod": 200,
+                "sys": {
+                    "sunset": 1711735802,
+                    "country": "GH",
+                    "sunrise": 1711692035
+                },
+                "base": "stations",
+                "main": {
+                    "temp": 304.49,
+                    "humidity": 69,
+                    "pressure": 1008,
+                    "temp_max": 304.49,
+                    "temp_min": 304.49,
+                    "sea_level": 1008,
+                    "feels_like": 311.36,
+                    "grnd_level": 1005
+                },
+                "name": "Accra",
+                "wind": {
+                    "deg": 210,
+                    "gust": 5.96,
+                    "speed": 6.33
+                },
+                "coord": {
+                    "lat": 5.556,
+                    "lon": -0.1969
+                },
+                "clouds": {
+                    "all": 100
+                },
+                "weather": [
+                    {
+                        "id": 804,
+                        "icon": "04d",
+                        "main": "Clouds",
+                        "description": "overcast clouds"
+                    }
+                ],
+                "timezone": 0,
+                "visibility": 10000
+            }
+        };
+
+        const response = mockedResponse 
+        const result: IncidentDTO = createIncidentDTO(client_id, incident_desc, city, country);
+  
+        expect(result).to.deep.equal({
+            client_id: 10,
+            incident_desc: 'Description of the incident',
+            city: 'Accra',
+            country: 'Ghana'
+        });
+
+        expect(response).to.deep.equal(mockedResponse )
+    });
+
+
 });
+// it('should create an incident with the provided parameters and a response from the weather API endpoint', async () => {
+//     // Mock request and response objects
+//     const req: Partial<Request> = {
+//         body: {
+//             client_id: 10,
+//             incident_desc: 'Description of the incident',
+//             city: 'Accra',
+//             country: 'Ghana'
+//         }
+//     };
+//     const res: Partial<Response> = {
+//         status: sinon.stub().returnsThis(),
+//         json: sinon.stub()
+//     };
+
+//     // Stub for fetch function to mock weather API response
+//     const fetchStub = sinon.stub(fetch, 'Promise');
+//     const weatherResponse = {
+//         main: {
+//             temp: 25.5, // Mocked temperature
+//             humidity: 80 // Mocked humidity
+//             // Other weather data properties can be added as needed
+//         }
+//     };
+//     fetchStub.resolves({
+//         json: async () => weatherResponse
+//     } as any);
+
+//     // Mocking process.env
+//     process.env.API_KEY = 'your-api-key';
+
+//     // Call the function with mocked objects
+//     await createIncident( , res);
+
+//     // Check if response status is 201
+//     sinon.assert.calledWith(res.status as unknown as sinon.SinonStub, 201);
+
+//     // Check if the response contains the newly created incident with weather data
+//     const expectedIncident: IncidentDTO = {
+//         client_id: 10,
+//         incident_desc: 'Description of the incident',
+//         city: 'Accra',
+//         country: 'Ghana',
+//         weather_report: weatherResponse // Assuming the function adds weather data to the incident object
+//     };
+//     sinon.assert.calledWith(res.json as sinon.SinonStub, expectedIncident);
+// });
+// });
