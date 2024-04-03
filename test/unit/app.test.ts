@@ -1,7 +1,9 @@
-
-import { assert } from "chai"
+import nock from "nock";
+import { Request, Response } from 'express';
+import { assert , expect } from "chai"
 const sinon = require('sinon');
 const  { searchIncidents ,listIncidents }  = require('../../src/controller/incidentController');
+import { createIncident } from "../../src/controller/incidentController";
 
 type statusCode = {
 	code : number
@@ -80,4 +82,79 @@ describe('searchIncidents', () => {
 });
 
 
+const baseUrl = 'https://api.openweathermap.org/data/2.5/weather?q=accra&appid=8729474y092edsdbdnw90';
 
+describe("create incident", () => {
+
+    let res: { status: (code: number) => statusCode, json: any };
+
+    beforeEach(() => {
+        res = {
+            status: sinon.stub().returnsThis() as (code: number) => statusCode,
+            json: sinon.stub()
+        };
+    })
+
+    it("should make a GET request from API", async () => {
+ 
+        const mockedUserResponse = {
+
+            "id": 12,
+            "client_id": 10,
+            "incident_desc": "Description of the incident",
+            "city": "Accra",
+            "country": "Ghana",
+            "date": "2024-03-29T14:15:21.729Z",
+            "weather_report": {
+                "dt": 1711721427,
+                "id": 2306104,
+                "cod": 200,
+                "sys": {
+                    "sunset": 1711735802,
+                    "country": "GH",
+                    "sunrise": 1711692035
+                },
+                "base": "stations",
+                "main": {
+                    "temp": 304.49,
+                    "humidity": 69,
+                    "pressure": 1008,
+                    "temp_max": 304.49,
+                    "temp_min": 304.49,
+                    "sea_level": 1008,
+                    "feels_like": 311.36,
+                    "grnd_level": 1005
+                },
+                "name": "Accra",
+                "wind": {
+                    "deg": 210,
+                    "gust": 5.96,
+                    "speed": 6.33
+                },
+                "coord": {
+                    "lat": 5.556,
+                    "lon": -0.1969
+                },
+                "clouds": {
+                    "all": 100
+                },
+                "weather": [
+                    {
+                        "id": 804,
+                        "icon": "04d",
+                        "main": "Clouds",
+                        "description": "overcast clouds"
+                    }
+                ],
+                "timezone": 0,
+                "visibility": 10000
+            }
+        };
+        nock('https://api.openweathermap.org')
+            .get(`/data/2.5/weather?q=Accra&appid=8729474y092edsdbdnw90`)
+            .reply(201, mockedUserResponse);
+
+        // Check if response status is 201
+        assert.ok(res.status(201));
+    });
+});
