@@ -28,14 +28,14 @@ An API for precise incident tracking tailored for insurance clients, enabling ef
 - The weather report should be fetched from the API service of https://openweathermap.org/current
 
 > [!IMPORTANT]
-> A live URL for the api to send a post request : https://incident-report-api-3oyj.onrender.com/api/report-incident
+> A live URL for the api to send a post request : https://incident-report-api-bnfb.onrender.com/api/report-incident
 
 
 ### Second Api functionality :
  - A `POST` endpoint that searches for incidents based on `country name`.
   
 > [!IMPORTANT]
->  A live URL for the api that searches for incidents based on country name : https://incident-report-api-3oyj.onrender.com/api/search
+>  A live URL for the api that searches for incidents based on country name : https://incident-report-api-bnfb.onrender.com/api/search
 
 
 ### Third Api functionality :
@@ -44,7 +44,7 @@ An API for precise incident tracking tailored for insurance clients, enabling ef
 - NB : This URL below is tailored to filter incidents by city, temperature range, and humidity
 
 > [!IMPORTANT]
->  A live URL for the api that has the capability of filtering the data by city, temperature range, humidity range and list all incidents : https://incident-report-api-3oyj.onrender.com/api/fetch-incident-report?city=lagos&temp_min=300&temp_max=315&humidity=46
+>  A live URL for the api that has the capability of filtering the data by city, temperature range, humidity range and list all incidents : https://incident-report-api-bnfb.onrender.com/api/fetch-incident-report?city=Accra&temp_min=304&temp_max=306
 
 
 
