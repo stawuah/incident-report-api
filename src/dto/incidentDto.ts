@@ -1,4 +1,4 @@
-type IncidentDTO = {
+export type IncidentDTO = {
 	client_id: number;
 	incident_desc: string;
 	city: string;

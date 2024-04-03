@@ -1,9 +1,9 @@
 import nock from "nock";
-import { Request, Response } from 'express';
 import { assert , expect } from "chai"
+import { createIncidentDTO, IncidentDTO } from "../../src/dto/incidentDto";
 const sinon = require('sinon');
-const  { searchIncidents ,listIncidents }  = require('../../src/controller/incidentController');
-import { createIncident } from "../../src/controller/incidentController";
+const  { searchIncidents ,listIncidents ,}  = require('../../src/controller/incidentController');
+
 
 type statusCode = {
 	code : number
@@ -95,16 +95,9 @@ describe("create incident", () => {
         };
     })
 
-    it("should make a GET request from API", async () => {
- 
-        const mockedUserResponse = {
+    it("should make a GET request from API using the fetch function", async () => {
 
-            "id": 12,
-            "client_id": 10,
-            "incident_desc": "Description of the incident",
-            "city": "Accra",
-            "country": "Ghana",
-            "date": "2024-03-29T14:15:21.729Z",
+        const mockedUserResponse = {
             "weather_report": {
                 "dt": 1711721427,
                 "id": 2306104,
@@ -157,4 +150,41 @@ describe("create incident", () => {
         // Check if response status is 201
         assert.ok(res.status(201));
     });
+    
+    it('req.body should pass IncidentDTO as expected', () => {
+        const client_id = 123;
+        const incident_desc = 'Test incident';
+        const city = 'Test City';
+        const country = 'Test Country';
+
+        const result: IncidentDTO = createIncidentDTO(client_id, incident_desc, city, country);
+
+        expect(result).to.deep.equal({
+            client_id: 123,
+            incident_desc: 'Test incident',
+            city: 'Test City',
+            country: 'Test Country'
+        });
+    });
+
+
+    it('should create an incident DTO object with the provided parameters', () => {
+       
+        const client_id = 10;
+        const incident_desc = 'Description of the incident';
+        const city = 'Accra';
+        const country = 'Ghana';
+
+    
+        const result: IncidentDTO = createIncidentDTO(client_id, incident_desc, city, country);
+
+        // Assert
+        expect(result).to.deep.equal({
+            client_id: 10,
+            incident_desc: 'Description of the incident',
+            city: 'Accra',
+            country: 'Ghana'
+        });
+    });
+
 });
