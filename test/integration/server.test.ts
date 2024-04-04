@@ -55,61 +55,70 @@ describe("integration tests", () => {
     it("should return incident reports for Accra with temperature between 301 and 306 with humidity range of 74", (done) => {
 
       const  expectedQuery = [
-            {
-                "weather_info": {
-                    "main": {
-                        "temp": 301.38,
-                        "humidity": 74
-                    },
-                    "name": "Accra"
-                }
-            },
-            {
-                "weather_info": {
-                    "main": {
-                        "temp": 301.38,
-                        "humidity": 74
-                    },
-                    "name": "Accra"
-                }
-            },
-            {
-                "weather_info": {
-                    "main": {
-                        "temp": 301.38,
-                        "humidity": 74
-                    },
-                    "name": "Accra"
-                }
-            },
-            {
-                "weather_info": {
-                    "main": {
-                        "temp": 301.38,
-                        "humidity": 74
-                    },
-                    "name": "Accra"
-                }
-            },
-            {
-                "weather_info": {
-                    "main": {
-                        "temp": 301.38,
-                        "humidity": 74
-                    },
-                    "name": "Accra"
-                }
-            },
-            {
-                "weather_info": {
-                    "main": {
-                        "temp": 301.38,
-                        "humidity": 74
-                    },
-                    "name": "Accra"
-                }
+        {
+            "weather_info": {
+                "main": {
+                    "temp": 301.38,
+                    "humidity": 74
+                },
+                "name": "Accra"
             }
-        ]
+        },
+        {
+            "weather_info": {
+                "main": {
+                    "temp": 301.38,
+                    "humidity": 74
+                },
+                "name": "Accra"
+            }
+        },
+        {
+            "weather_info": {
+                "main": {
+                    "temp": 301.38,
+                    "humidity": 74
+                },
+                "name": "Accra"
+            }
+        },
+        {
+            "weather_info": {
+                "main": {
+                    "temp": 301.38,
+                    "humidity": 74
+                },
+                "name": "Accra"
+            }
+        },
+        {
+            "weather_info": {
+                "main": {
+                    "temp": 301.38,
+                    "humidity": 74
+                },
+                "name": "Accra"
+            }
+        },
+        {
+            "weather_info": {
+                "main": {
+                    "temp": 301.38,
+                    "humidity": 74
+                },
+                "name": "Accra"
+            }
+        },
+        {
+            "weather_info": {
+                "main": {
+                    "temp": 303.38,
+                    "humidity": 74
+                },
+                "name": "Accra"
+            }
+        }
+    ]
         supertest(app)
             .get("/api/fetch-incident-report")
             .query({ city: 'Accra', temp_min: 301, temp_max: 306 , humidity: 74 })
