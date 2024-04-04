@@ -53,12 +53,11 @@ The incident API utilizes dependency injection to decouple components and improv
 - NB : This URL below is tailored to filter incidents by city, temperature range, and humidity
 
 > [!IMPORTANT]
->  A live URL for the api that has the capability of filtering the data by city, temperature range, humidity range and list all incidents : https://incident-report-api-bnfb.onrender.com/api/fetch-incident-report?city=Accra&temp_min=304&temp_max=306
-
+>  A live URL for the api that has the capability of filtering the data by city, temperature range, humidity range and list all incidents : https://incident-report-api-bnfb.onrender.com/api/fetch-incident-report?city=Accra&temp_min=301&temp_max=302&humidity=74
 
 
 ## Published API documentation
 
 > [!NOTE]
 > URL for published API documentation
-https://documenter.getpostman.com/view/31616104/2sA35G322U
+[https://documenter.getpostman.com/view/31616104/2sA35G322U]
