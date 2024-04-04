@@ -1,12 +1,10 @@
 import { Pool } from 'pg';
+require('dotenv').config();
 
 let pool: Pool | null = null;
-
-export function getPool(): Pool {
-	if (!pool) {
-		pool = new Pool({
-			connectionString: process.env.DATABASE_CONNECTION,
-		});
-	}
-	return pool;
+if (!pool) {
+	pool = new Pool({
+		connectionString: process.env.DATABASE_CONNECTION,
+	});
 }
+export default pool;

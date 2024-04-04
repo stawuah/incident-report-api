@@ -1,120 +1,122 @@
 import { Request, Response } from 'express';
-import { getPool } from '../db/db';
 import { createIncidentDTO, validateIncidentDTO } from '../dto/incidentDto';
-import { CustomError } from '../middleware/errHandler';
+import { Pool } from 'pg';
 
 // A POST endpoint that receives the incident report.
 // The endpoint receives the report, adds weather data and stores it in a table “incidents”.
 // The weather report should be fetched from the API service of https://openweathermap.org/current
-const db = getPool();
 
-export const createIncident = async (req: Request, res: Response) => {
-	try {
-		const { client_id, incident_desc, city, country } = req.body;
+export const createIncident =
+	(db: Pool) => async (req: Request, res: Response) => {
+		try {
+			const { client_id, incident_desc, city, country } = req.body;
 
-		const incidentdTo = createIncidentDTO(
-			client_id,
-			incident_desc,
-			city,
-			country,
-		);
+			const IncidentDTO = createIncidentDTO(
+				client_id,
+				incident_desc,
+				city,
+				country,
+			);
 
-		validateIncidentDTO(incidentdTo);
+			validateIncidentDTO(IncidentDTO);
 
-		const weatherResponse = await fetch(
-			`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.API_KEY}`,
-		);
-		const weatherData = await weatherResponse.json();
+			const weatherResponse = await fetch(
+				`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.API_KEY}`,
+			);
+			const weatherData = await weatherResponse.json();
 
-		if (!weatherData) {
-			return res.status(422).json({ error: 'Weather data not found' });
-		}
+			if (!weatherData) {
+				return res
+					.status(404)
+					.json({ error: 'Weather data not found' });
+			}
 
-		const currentDate = new Date();
+			const currentDate = new Date();
 
-		const query = `
+			const query = `
             INSERT INTO incidents (client_id, incident_desc, city, country, date, weather_report)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *;
         `;
-		const values = [
-			client_id,
-			incident_desc,
-			city,
-			country,
-			currentDate,
-			JSON.stringify(weatherData),
-		];
+			const values = [
+				client_id,
+				incident_desc,
+				city,
+				country,
+				currentDate,
+				JSON.stringify(weatherData),
+			];
 
-		const result = await db.query(query, values);
-		const newIncident = result.rows[0];
+			const result = await db.query(query, values);
+			const newIncident = result.rows[0];
 
-		res.status(201).json(newIncident);
-	} catch (error) {
-		if (error instanceof CustomError) {
-			res.status(error.statusCode).json({ error: error.message });
-		} else {
-			res.status(500).json({ error: 'Internal Server Error' });
+			res.status(201).json(newIncident);
+		} catch (error) {
+			console.log(error);
+			res.status(500).json({ error: 'Internal server error' });
 		}
-	}
-};
+	};
 
 // A POST endpoint that searches for incidents based on country name.
-export const searchIncidents = async (req: Request, res: Response) => {
-	try {
-		const { country } = req.body;
+export const searchIncidents =
+	(db: Pool) => async (req: Request, res: Response) => {
+		try {
+			let { country } = req.body;
 
-		// Check if country parameter is provided
-		if (!country) {
-			return res
-				.status(422)
-				.json({ error: 'Country parameter is required' });
-		}
+			// Check if country parameter is provided
+			if (!country) {
+				return res
+					.status(400)
+					.json({ error: 'Country parameter is required' });
+			}
 
-		// Construct SQL query
-		const query = `
+			// Construct SQL query
+			const query = `
             SELECT *
             FROM incidents
-            WHERE country = $1;
+            WHERE LOWER(country) = LOWER($1);
         `;
 
-		// Define values to be passed as parameters to the SQL query
-		const values = [country];
+			// Define values to be passed as parameters to the SQL query
+			const values = [country];
 
-		// Retrieve incidents from the database
+			// Retrieve incidents from the database
+			const result = await db.query(query, values);
+			const incidents = result.rows;
 
-		const result = await db.query(query, values);
-		const incidents = result.rows;
+			// Check if no incidents were found
+			if (!incidents || incidents.length === 0) {
+				return res.status(404).json({ error: 'No incidents found' });
+			}
 
-		res.status(201).json(incidents);
-	} catch (error) {
-		if (error instanceof CustomError) {
-			res.status(error.statusCode).json({ error: error.message });
-		} else {
-			res.status(500).json({ error: 'Internal Server Error' });
+			res.status(200).json(incidents);
+		} catch (error) {
+			console.log(error);
+			res.status(500).json({ error: 'Internal server error' });
 		}
-	}
-};
+	};
 
 // A GET endpoint that lists all the incidents.
 // The endpoint should have the capability of filtering the data by city, temperature range and humidity range.
-export const listIncidents = async (req: Request, res: Response) => {
-	try {
-		let { city, temp_min, temp_max, humidity } = req.query;
+export const listIncidents =
+	(db: Pool) => async (req: Request, res: Response) => {
+		try {
+			let { city, temp_min, temp_max, humidity } = req.query;
+			if (!city) {
+			}
+			// Convert to numeric type
+			let tem_min: number | undefined = temp_min
+				? parseInt(temp_min as string)
+				: undefined;
+			let tem_max: number | undefined = temp_max
+				? parseInt(temp_max as string)
+				: undefined;
+			let humid: number | undefined = humidity
+				? parseInt(humidity as string)
+				: undefined;
 
-		// Convert to numeric type
-		let tem_min: number | undefined = temp_min
-			? parseInt(temp_min as string)
-			: undefined;
-		let tem_max: number | undefined = temp_max
-			? parseInt(temp_max as string)
-			: undefined;
-		let humid: number | undefined = humidity
-			? parseInt(humidity as string)
-			: undefined;
-
-		// Construct base SQL query
-		let query = `
+			// Construct base SQL query
+			let query = `
             SELECT
                 jsonb_build_object(
                     'main', jsonb_build_object(
@@ -126,45 +128,44 @@ export const listIncidents = async (req: Request, res: Response) => {
             FROM incidents
         `;
 
-		let whereClauses: string[] = [];
+			let whereClauses: string[] = [];
 
-		// Append WHERE clauses based on provided filters
-		if (city) {
-			whereClauses.push(`(weather_report->>'name') ILIKE '%${city}%'`);
-		}
+			// Append WHERE clauses based on provided filters
+			if (city) {
+				whereClauses.push(
+					`(weather_report->>'name') ILIKE '%${city}%'`,
+				);
+			}
 
-		if (tem_min && tem_max) {
-			whereClauses.push(
-				`(weather_report->'main'->>'temp')::numeric >= ${tem_min} AND (weather_report->'main'->>'temp')::numeric <= ${tem_max}`,
-			);
-		}
+			if (tem_min && tem_max) {
+				whereClauses.push(
+					`(weather_report->'main'->>'temp')::numeric >= ${tem_min} AND (weather_report->'main'->>'temp')::numeric <= ${tem_max}`,
+				);
+			}
 
-		if (humid) {
-			whereClauses.push(
-				`(weather_report->'main'->>'humidity')::numeric = ${humid}`,
-			);
-		}
+			if (humid) {
+				whereClauses.push(
+					`(weather_report->'main'->>'humidity')::numeric = ${humid}`,
+				);
+			}
 
-		// Add WHERE clause to the query if there are any filters
-		if (whereClauses.length > 1) {
-			query += ` WHERE ${whereClauses.join(' AND ')}`;
-		} else if (whereClauses.length === 1) {
-			query += ` WHERE ${whereClauses[0]}`;
-		}
+			// Add WHERE clause to the query if there are any filters
+			if (whereClauses.length > 1) {
+				query += ` WHERE ${whereClauses.join(' AND ')}`;
+			} else if (whereClauses.length === 1) {
+				query += ` WHERE ${whereClauses[0]}`;
+			}
 
-		const { rows } = await db.query(query);
+			const { rows } = await db.query(query);
 
-		if (!rows || rows.length === 0) {
-			throw new CustomError('No incidents found', 404);
-		}
+			if (!rows || rows.length === 0) {
+				return res.status(404).json({ error: 'No incidents found' });
+			}
 
-		// Send the response with the fetched data
-		res.json(rows);
-	} catch (error) {
-		if (error instanceof CustomError) {
-			res.status(error.statusCode).json({ error: error.message });
-		} else {
+			// Send the response with the fetched data
+			res.json(rows);
+		} catch (error) {
+			console.log(error);
 			res.status(500).json({ error: 'Internal Server Error' });
 		}
-	}
-};
+	};

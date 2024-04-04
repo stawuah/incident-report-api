@@ -4,10 +4,13 @@ import {
 	searchIncidents,
 	listIncidents,
 } from '../controller/incidentController';
+import { Pool } from 'pg';
 
 const router = express.Router();
 
-router.get('/fetch-incident-report', listIncidents);
-router.post('/report-incident', createIncident);
-router.post('/search', searchIncidents);
-export default router;
+export default (db: Pool) => {
+	router.get('/fetch-incident-report', listIncidents(db));
+	router.post('/report-incident', createIncident(db));
+	router.post('/search', searchIncidents(db));
+	return router;
+};
