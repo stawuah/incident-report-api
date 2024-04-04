@@ -7,7 +7,7 @@ The incident API utilizes dependency injection to decouple components and improv
 
 1. Clone the repository:
    
-   `git clone https://github.com/yourusername/incident-api.git`
+   `git clone https://github.com/stawuah/incident-api.git`
 
 2. Install required packages:   `npm i`
 
