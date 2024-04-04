@@ -1,6 +1,8 @@
 # Incident Reporting API 
 An API for precise incident tracking tailored for insurance clients, enabling efficient search and delivery of accurate information
 
+The incident API utilizes dependency injection to decouple components and improve testability. Key dependencies such as the database connection, external API services, and other services are injected into the appropriate components.
+
 ## Installation
 
 1. Clone the repository:
@@ -9,14 +11,21 @@ An API for precise incident tracking tailored for insurance clients, enabling ef
 
 2. Install required packages:   `npm i`
 
-3 Ensure to configure the environment variables :
-
-``` PORT="LOCAL_SERVER_PORT_NUMBER"
-    API_KEY="YOUR_WEARTHER_API_KEY"
-    DATABASE_CONNECTION="DATABASE CONNECTION URI"
-```
+ 3 Ensure to configure the environment variables :
+   
+   ```
+       PORT="LOCAL_SERVER_PORT_NUMBER"
+       API_KEY="YOUR_WEARTHER_API_KEY"
+       DATABASE_CONNECTION="DATABASE CONNECTION URI"
+   ```
 
 4. To initiate the application, execute either `make dev` or `npm run dev` command.
+
+
+## Running Tests :
+
+5. To run test, execute either `make test` or `npm run test` command.
+
 
    
   ## API functionalities :
